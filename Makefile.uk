@@ -69,6 +69,11 @@ CINCLUDES-$(CONFIG_LIBFFI)   += -I$(LIBGCC_BASE)/libffi/include
 CXXINCLUDES-$(CONFIG_LIBFFI) += -I$(LIBGCC_BASE)/libffi/include
 
 ################################################################################
+# libgcc code
+################################################################################
+LIBGCC_SRCS-y += $(LIBGCC_BASE)/libgcc/utils.c
+
+################################################################################
 # libbacktrace code
 ################################################################################
 LIBBACKTRACE_CINCLUDES-y = -I$(LIBGCC_BASE)/libbacktrace/include \
