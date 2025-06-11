@@ -40,11 +40,12 @@
 $(eval $(call addlib_s,libgcc,$(CONFIG_LIBGCC)))
 $(eval $(call addlib_s,libbacktrace,$(CONFIG_LIBBACKTRACE)))
 $(eval $(call addlib_s,libffi,$(CONFIG_LIBFFI)))
+$(eval $(call addlib_s,liblibgcc,$(CONFIG_LIBLIBGCC)))
 
 ################################################################################
 # Original sources
 ################################################################################
-LIBGCC_VERSION=7.3.0
+LIBGCC_VERSION=14.2.0
 LIBGCC_URL=https://ftp.gnu.org/gnu/gcc/gcc-$(LIBGCC_VERSION)/gcc-$(LIBGCC_VERSION).tar.gz
 LIBGCC_SUBDIR=gcc-$(LIBGCC_VERSION)
 $(eval $(call fetch,libgcc,$(LIBGCC_URL)))
@@ -55,6 +56,7 @@ $(eval $(call fetch,libgcc,$(LIBGCC_URL)))
 LIBGCC_EXTRACTED = $(LIBGCC_ORIGIN)/gcc-$(LIBGCC_VERSION)
 LIBBACKTRACE_EXTRACTED = $(LIBGCC_EXTRACTED)/libbacktrace
 LIBFFI_EXTRACTED = $(LIBGCC_EXTRACTED)/libffi
+LIBLIBGCC_EXTRACTED = $(LIBGCC_EXTRACTED)/libgcc
 
 ################################################################################
 # Library includes
@@ -117,3 +119,15 @@ LIBFFI_SRCS-y += $(LIBFFI_EXTRACTED)/src/raw_api.c
 LIBFFI_SRCS-$(CONFIG_ARCH_X86_64) += $(LIBFFI_EXTRACTED)/src/x86/ffi64.c
 LIBFFI_SRCS-$(CONFIG_ARCH_X86_64) += $(LIBFFI_EXTRACTED)/src/x86/unix64.S
 
+################################################################################
+# liblibgcc code
+################################################################################
+LIBLIBGCC_CINCLUDES-$(CONFIG_ARCH_X86_64) += -I$(LIBGCC_BASE)/libgcc \
+		-I$(LIBLIBGCC_EXTRACTED) \
+		-I$(LIBGCC_EXTRACTED)/include \
+		-I$(LIBGCC_EXTRACTED)/gcc
+
+LIBLIBGCC_CFLAGS-$(CONFIG_ARCH_X86_64) += -DDWARF2_DEBUGGING_INFO -DMIN_UNITS_PER_WORD=4 -Wall \
+	-Wno-implicit-function-declaration -Wno-sign-compare \
+	-Wno-unused-parameter -Wno-empty-body -Wno-implicit-fallthrough
+LIBLIBGCC_SRCS-$(CONFIG_ARCH_X86_64) += $(LIBLIBGCC_EXTRACTED)/libgcc2.c

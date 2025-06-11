@@ -26,4 +26,10 @@ config LIBFFI
 if LIBFFI
 endif
 
+config LIBLIBGCC
+	bool "liblibgcc - Low level runtime library"
+	default n
+if LIBLIBGCC
+endif
+
 endif
